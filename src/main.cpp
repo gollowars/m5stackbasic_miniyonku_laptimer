@@ -71,15 +71,20 @@ void startMeasureTime() {
   M5.Lcd.clear();
 }
 
-void endMeasureTime() { is_timer_ready = false; }
+void endMeasureTime() {
+  is_timer_ready = false;
+  M5.Lcd.setCursor(0, 20);
+  M5.Lcd.printf("Finish");
+}
 
 void OnDetectLightOff() {
 
   if (currentIndex < arraySize) {
     timeArray[currentIndex] = millis();
 
-    float sum;
     if (currentIndex >= 1) {
+      float sum = 0.0f;
+      int sumcnt = 0;
       for (size_t i = 0; i < currentIndex; i++) {
 
         float time = (timeArray[i + 1] - timeArray[i]) / 1000.0f;
@@ -89,9 +94,10 @@ void OnDetectLightOff() {
         M5.Lcd.printf("Time%d: %.3f\n", i + 1, time);
 
         sum += time;
+        sumcnt++;
       }
 
-      float avg = sum / currentIndex;
+      float avg = sum / sumcnt;
       M5.Lcd.setCursor(160, 20);
       M5.Lcd.printf("Avg: %.3f\n", avg);
     }
@@ -114,6 +120,8 @@ void setup() {
   M5.Lcd.setTextSize(2);
 
   setupLightSesor();
+
+  startMeasureTime();
 }
 
 void loop() {
